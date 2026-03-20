@@ -1,0 +1,84 @@
+# PHP
+alias phpunit="vendor/bin/phpunit"
+alias a="php artisan"
+alias ar="php artisan remote"
+alias c="claude"
+alias cy="claude-yolo"
+alias cu="composer update"
+alias cr="composer require"
+alias ci="composer install"
+alias cda="composer dump-autoload -o"
+alias hostfile="sudo nano /etc/hosts"
+alias deploy='envoy run deploy'
+alias deploy-code='envoy run deploy-code'
+alias mfs='php artisan migrate:fresh --seed'
+alias nah='git reset --hard;git clean -df'
+
+alias pp="php artisan test --parallel"
+alias sshconfig="nano ~/.ssh/config"
+alias copykey='command cat ~/.ssh/id_ed25519.pub 2>/dev/null || command cat ~/.ssh/id_rsa.pub 2>/dev/null | pbcopy'
+
+# JavaScript
+alias jest="./node_modules/.bin/jest"
+
+# Git
+alias gpo="git push origin"
+alias push="git push"
+alias pull="git pull"
+alias uncommit="git reset --soft HEAD~1"
+
+# Fast open
+alias o="open ."
+
+# List all files colorized in long format
+alias l="ls -laF"
+
+# PhpStorm
+alias phpstorm='open -a ~/Applications/PhpStorm.app "`pwd`"'
+
+# VS Code
+alias vscode='code "`pwd`"'
+
+# Zed
+alias zed='open -a /Applications/Zed.app "`pwd`"'
+
+# Redis
+alias flush-redis="redis-cli FLUSHALL"
+
+# Show/hide hidden files in Finder
+alias show="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
+alias hide="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
+
+# IP addresses
+alias ip="curl ifconfig.me/ip ; echo"
+alias localip="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
+
+# Flush Directory Service cache
+alias flushdns="sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder"
+
+# Global Protect VPN
+alias gp-saml-gui=~/venvs/gp-saml-gui/bin/gp-saml-gui
+
+# Enable aliases to be sudo’ed
+alias sudo='sudo '
+
+# Modern CLI tool aliases (conditional on installation)
+if command -v eza &> /dev/null; then
+    alias ls="eza --icons --group-directories-first"
+    alias l="eza -la --icons --group-directories-first --hyperlink"
+    alias ll="eza -l --icons --group-directories-first --hyperlink"
+    alias lt="eza --tree --level=2 --icons"
+fi
+
+if command -v bat &> /dev/null; then
+    alias cat="bat --style=plain"
+fi
+
+if command -v rg &> /dev/null; then
+    alias grep="rg"
+fi
+
+if command -v bottom &> /dev/null; then
+    alias htop="btm"
+    alias top="btm"
+fi

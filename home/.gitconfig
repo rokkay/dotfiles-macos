@@ -1,0 +1,41 @@
+[core]
+	excludesfile = /Users/rokkay/.global-gitignore
+	autocrlf = false
+	pager = delta
+
+[user]
+	name = Jose Carlos Raya Leon
+	email = rayaleonjosecarlos@gmail.com
+
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+
+[fetch]
+	prune = true
+
+[pull]
+	rebase = false
+
+[init]
+	defaultBranch = main
+
+[push]
+	autoSetupRemote = true
+
+[interactive]
+	diffFilter = delta --color-only
+
+[delta]
+	navigate = true
+	light = false
+	side-by-side = true
+	line-numbers = true
+
+[merge]
+	conflictstyle = diff3
+
+[diff]
+	colorMoved = default
