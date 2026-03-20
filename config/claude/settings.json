@@ -62,13 +62,20 @@
   },
   "enabledPlugins": {
     "laravel-simplifier@laravel": true,
-    "impeccable@impeccable": true
+    "impeccable@impeccable": true,
+    "agent-browser@agent-browser": true
   },
   "extraKnownMarketplaces": {
     "impeccable": {
       "source": {
         "source": "github",
         "repo": "pbakaus/impeccable"
+      }
+    },
+    "agent-browser": {
+      "source": {
+        "source": "github",
+        "repo": "vercel-labs/agent-browser"
       }
     }
   },
