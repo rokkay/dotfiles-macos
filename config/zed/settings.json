@@ -1,0 +1,126 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "edit_predictions": {
+    "provider": "ollama",
+  },
+  "agent": {
+    "default_model": {
+      "provider": "ollama",
+      "model": "qwen3.5:9b",
+      "enable_thinking": true,
+    },
+    "favorite_models": [],
+    "model_parameters": [],
+  },
+  "ui_font_size": 16,
+  "buffer_font_size": 15,
+  "theme": {
+    "mode": "system",
+    "light": "One Dark",
+    "dark": "One Dark",
+  },
+  "use_system_window_tabs": true,
+  "show_edit_predictions": true,
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": true,
+  },
+  "debugger": {
+    "button": false,
+  },
+  "search": {
+    "button": false,
+  },
+  "diagnostics": {
+    "button": false,
+  },
+  "scroll_beyond_last_line": "off",
+  "autosave": {
+    "after_delay": {
+      "milliseconds": 1000,
+    },
+  },
+  "title_bar": {
+    "show_branch_name": true,
+    "show_branch_icon": false,
+    "show_menus": true,
+    "show_sign_in": false,
+    "show_onboarding_banner": false,
+    "show_project_items": true,
+  },
+  "minimap": {
+    "show": "never",
+  },
+  // Editor behavior
+  "remove_trailing_whitespace_on_save": true,
+  "ensure_final_newline_on_save": true,
+  "format_on_save": "on",
+  "show_completions_on_input": true,
+  // Terminal
+  "terminal": {
+    "button": false,
+    "font_family": "MesloLGM Nerd Font Mono",
+    "font_size": 14,
+    "line_height": {
+      "custom": 1.5,
+    },
+    "dock": "bottom",
+    "env": {
+      "AGNOSTER_DIR_FG": "black",
+      "AGNOSTER_GIT_CLEAN_FG": "black",
+      "AGNOSTER_GIT_DIRTY_FG": "black",
+    },
+  }, // File associations
+  "file_types": {
+    "PHP": ["php", "php_cs", "php_cs.dist"],
+  },
+
+  // Search exclusions
+  "file_scan_exclusions": ["**/.git", "**/node_modules", "**/bower_components"],
+
+  // Inlay hints off (like codeLens off)
+  "inlay_hints": {
+    "enabled": false,
+  },
+
+  // Project panel on the left
+  "project_panel": {
+    "hide_root": false,
+    "dock": "left",
+    "button": true,
+    "auto_reveal_entries": false,
+  },
+  "outline_panel": {
+    "button": false,
+  },
+  "collaboration_panel": {
+    "button": false,
+    "dock": "right",
+  },
+  "git_panel": {
+    "sort_by_path": true,
+    "tree_view": true,
+  },
+  "notification_panel": {
+    "button": false,
+  },
+  // Language-specific settings
+  "languages": {
+    "PHP": {
+      "language_servers": ["intelephense", "!phpactor", "!phptools", "..."],
+      "formatter": {
+        "external": {
+          "command": "/Users/rokkay/bin/php-format",
+          "arguments": ["{buffer_path}"],
+        },
+      },
+    },
+  },
+}
