@@ -1,4 +1,7 @@
 {
+  "env": {
+    "CLAUDE_CODE_NEW_INIT": "1"
+  },
   "permissions": {
     "allow": [
       "Skill(ray-skill:*)",
@@ -56,6 +59,7 @@
     ],
     "defaultMode": "acceptEdits"
   },
+  "model": "opusplan",
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh"
@@ -80,6 +84,5 @@
     }
   },
   "alwaysThinkingEnabled": true,
-  "skipDangerousModePermissionPrompt": true,
-  "model": "opus"
+  "skipDangerousModePermissionPrompt": true
 }
