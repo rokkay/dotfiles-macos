@@ -6,6 +6,10 @@ Do not excessively use emojis.
 
 Prefer using browser agent skill over using playwright directly.
 
+## Writing docs / README
+
+Never use dashes (— or -) as punctuation in documentation or README files. Rephrase sentences using periods, commas, or parentheses instead.
+
 ## Coding Standards
 
 When working with Laravel/PHP projects, always use the php-guidelines-from-spatie skill

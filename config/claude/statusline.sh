@@ -14,6 +14,9 @@ if git -C "$cwd" rev-parse --git-dir > /dev/null 2>&1; then
   # Get repo name (just the directory name)
   repo_name=$(basename "$cwd")
 
+  # Get current git branch
+  git_branch=$(git -C "$cwd" symbolic-ref --short HEAD 2>/dev/null || git -C "$cwd" rev-parse --short HEAD 2>/dev/null)
+
   # Color the context percentage based on usage
   if [ "$ctx_pct" -ge 60 ]; then
     ctx_color='\033[01;31m' # red
@@ -23,8 +26,8 @@ if git -C "$cwd" rev-parse --git-dir > /dev/null 2>&1; then
     ctx_color='\033[01;32m' # green
   fi
 
-  printf '\033[01;36m%s\033[00m | ctx: %b%s%%\033[00m' \
-    "$repo_name" "$ctx_color" "$ctx_pct"
+  printf '\033[01;36m%s\033[00m \033[00;37m(%s)\033[00m | ctx: %b%s%%\033[00m' \
+    "$repo_name" "$git_branch" "$ctx_color" "$ctx_pct"
 else
   printf '\033[01;36m%s\033[00m | ctx: %s%%' "$cwd" "$ctx_pct"
 fi

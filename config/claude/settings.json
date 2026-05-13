@@ -19,9 +19,12 @@
       "Bash(php artisan:*)",
       "Bash(npm:*)",
       "Bash(npx:*)",
+      "Bash(bun:*)",
+      "Bash(bunx:*)",
       "Bash(yarn:*)",
       "Bash(pnpm:*)",
       "Bash(php:*)",
+      "Bash(ddev:*)",
       "Bash(docker:*)",
       "Bash(docker-compose:*)",
       "Bash(make:*)",
@@ -57,7 +60,7 @@
       "mcp__laravel-boost__*",
       "mcp__chrome-devtools__*"
     ],
-    "defaultMode": "acceptEdits"
+    "defaultMode": "auto"
   },
   "model": "opusplan",
   "statusLine": {
@@ -87,5 +90,6 @@
   "effortLevel": "high",
   "autoUpdatesChannel": "stable",
   "minimumVersion": "2.1.92",
-  "skipDangerousModePermissionPrompt": true
+  "skipDangerousModePermissionPrompt": true,
+  "skipAutoPermissionPrompt": true
 }
