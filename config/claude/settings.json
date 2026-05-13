@@ -84,5 +84,8 @@
     }
   },
   "alwaysThinkingEnabled": true,
+  "effortLevel": "high",
+  "autoUpdatesChannel": "stable",
+  "minimumVersion": "2.1.92",
   "skipDangerousModePermissionPrompt": true
 }

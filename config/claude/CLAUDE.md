@@ -16,3 +16,4 @@ For questions about GitHub, use the gh tool
 Never mention Claude Code in PR descriptions, PR comments, or issue comments
 Do not include a "Test plan" section in PR descriptions
 Do not include `Co-Authored-By` trailers in commit messages
+Do not auto-commit. Let me review changes first
