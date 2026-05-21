@@ -1,0 +1,85 @@
+#!/bin/bash
+#
+# Standalone Codex installation script
+# Can be run independently or as part of full dotfiles setup
+
+set -e
+
+# Colors
+BLUE='\033[0;34m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+step() { echo ""; echo -e "${BLUE}➜${NC} $1"; }
+success() { echo -e "${GREEN}✓${NC} $1"; }
+warn() { echo -e "${YELLOW}⚠${NC} $1"; }
+error() { echo -e "${RED}✗${NC} $1"; exit 1; }
+
+echo ""
+echo "Codex Installation"
+echo "=================="
+echo ""
+
+# Install Codex
+step "Installing Codex CLI"
+if command -v codex &>/dev/null; then
+    warn "Codex already installed"
+else
+    if command -v brew &>/dev/null; then
+        brew install --cask codex || warn "Codex installation failed"
+    else
+        warn "Homebrew not found, skipping Codex installation"
+    fi
+fi
+success "Codex processed"
+
+# Check if running from dotfiles repo
+DOTFILES_DIR="$HOME/.dotfiles"
+if [ ! -d "$DOTFILES_DIR" ]; then
+    # Try to detect if script is in a dotfiles directory
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    if [ -f "$SCRIPT_DIR/../config/codex/config.toml" ]; then
+        DOTFILES_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+    fi
+fi
+
+# Codex configuration
+if [ -d "$DOTFILES_DIR/config/codex" ]; then
+    step "Setting up Codex configuration"
+    mkdir -p ~/.codex/rules
+
+    ln -sf "$DOTFILES_DIR/config/codex/config.toml" ~/.codex/config.toml
+
+    if [ -f "$DOTFILES_DIR/config/codex/rules/default.rules" ]; then
+        ln -sf "$DOTFILES_DIR/config/codex/rules/default.rules" ~/.codex/rules/default.rules
+    else
+        warn "Codex default rules not found"
+    fi
+
+    if [ -f "$DOTFILES_DIR/config/claude/CLAUDE.md" ]; then
+        ln -sf "$DOTFILES_DIR/config/claude/CLAUDE.md" ~/.codex/AGENTS.md
+    else
+        warn "Shared agent instructions not found"
+    fi
+
+    success "Codex configured"
+else
+    warn "Dotfiles directory not found, skipping configuration"
+    echo "  To set up configuration later, clone dotfiles to ~/.dotfiles"
+fi
+
+# Done
+echo ""
+success "Codex setup complete!"
+echo ""
+step "Next steps:"
+if [ ! -d "$DOTFILES_DIR/config/codex" ]; then
+    echo "  • Clone dotfiles for custom configuration:"
+    echo "    git clone https://github.com/freekmurze/dotfiles.git ~/.dotfiles"
+    echo "    ~/.dotfiles/bin/install-codex"
+    echo ""
+fi
+echo "  • Start using: codex"
+echo ""
