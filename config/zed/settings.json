@@ -14,8 +14,9 @@
   "agent": {
     "dock": "right",
     "default_model": {
-      "provider": "ollama",
-      "model": "qwen3.5:9b",
+      "effort": "medium",
+      "provider": "openai-subscribed",
+      "model": "gpt-5.3-codex",
       "enable_thinking": true,
     },
     "favorite_models": [],
