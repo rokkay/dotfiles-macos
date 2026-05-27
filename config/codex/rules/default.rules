@@ -55,3 +55,6 @@ prefix_rule(pattern=["whoami"], decision="allow")
 
 # --- Skills as CLI ---
 prefix_rule(pattern=["agent-browser"], decision="allow")
+prefix_rule(pattern=["ddev", "artisan"], decision="allow")
+prefix_rule(pattern=["ddev", "exec"], decision="allow")
+prefix_rule(pattern=["ddev", "composer"], decision="allow")

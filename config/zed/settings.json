@@ -7,6 +7,20 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "ssh_connections": [
+    {
+      "host": "srv4.solucionex.dev",
+      "username": "solucionex",
+      "args": [],
+      "projects": [
+        {
+          "paths": [
+            "/home/solucionex"
+          ]
+        }
+      ]
+    }
+  ],
   "base_keymap": "JetBrains",
   "edit_predictions": {
     "provider": "ollama",
