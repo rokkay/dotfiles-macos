@@ -6,6 +6,8 @@ Do not excessively use emojis.
 
 Prefer using browser agent skill over using playwright directly.
 
+Spanish prose/docs/reports/Markdown: preserve natural Spanish orthography, including accents, `ñ`, `¿`, `¡`, and normal Unicode. The ASCII-only editing preference does not apply to these artifacts.
+
 ## Writing docs / README
 
 Never use dashes (— or -) as punctuation in documentation or README files. Rephrase sentences using periods, commas, or parentheses instead.
