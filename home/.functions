@@ -59,7 +59,10 @@ function commit() {
 
      # Get diff with size limit, include stat summary for context
      diff_input=$(echo "=== Summary ===" && git diff --cached --stat && echo -e "\n=== Diff (truncated if large) ===" && git diff --cached | head -c 50000)
-     commitMessage=$(echo "$diff_input" | claude -p "Write a single-line commit message for this diff. Output ONLY the message, no quotes, no explanation, no markdown.")
+     tmp_msg_file=$(mktemp)
+     echo "$diff_input" | codex exec --sandbox read-only --skip-git-repo-check -o "$tmp_msg_file" "Write a single-line Conventional Commits message (https://www.conventionalcommits.org/en/v1.0.0/) for this diff. Format: <type>[optional scope]: <description>. Allowed types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert. Use lowercase type and scope. Description in imperative mood, lowercase, no trailing period, under 72 chars total. Append '!' after type/scope for breaking changes. Output ONLY the message line, no quotes, no body, no explanation, no markdown." >/dev/null 2>&1
+     commitMessage=$(cat "$tmp_msg_file" | tr -d '\r' | sed '/^$/d' | tail -n 1)
+     rm -f "$tmp_msg_file"
 
      # Stop spinner and clear line
      trap - INT
