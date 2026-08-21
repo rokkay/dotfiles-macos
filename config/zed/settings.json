@@ -7,6 +7,7 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "disable_ai": false,
   "ssh_connections": [
     {
       "host": "srv4.solucionex.dev",
@@ -66,7 +67,6 @@
   },
   "title_bar": {
     "show_branch_name": true,
-    "show_branch_icon": false,
     "show_menus": true,
     "show_sign_in": false,
     "show_onboarding_banner": false,

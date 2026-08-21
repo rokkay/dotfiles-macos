@@ -62,6 +62,7 @@
     ],
     "defaultMode": "auto"
   },
+  "disableClaudeAiConnectors": true,
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh"
@@ -91,5 +92,6 @@
   "effortLevel": "high",
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
+  "preferredNotifChannel": "ghostty",
   "skipAutoPermissionPrompt": true
 }
