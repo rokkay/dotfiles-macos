@@ -54,6 +54,13 @@
       "mcp__laravel-boost__*",
       "mcp__chrome-devtools__*"
     ],
+    "ask": [
+      "Read(~/.ssh/**)",
+      "Read(~/.claude/.credentials.json)",
+      "Read(~/.codex/config.toml)",
+      "Read(**/.env)",
+      "Read(**/.env.*)"
+    ],
     "defaultMode": "auto"
   },
   "disableClaudeAiConnectors": true,
