@@ -55,7 +55,6 @@ if [ -d "$DOTFILES_DIR/config/claude" ]; then
 
     # Symlink configuration files
     ln -sf "$DOTFILES_DIR/config/claude/CLAUDE.md" ~/.claude/CLAUDE.md
-    ln -sf "$DOTFILES_DIR/config/claude/laravel-php-guidelines.md" ~/.claude/laravel-php-guidelines.md
     ln -sf "$DOTFILES_DIR/config/claude/settings.json" ~/.claude/settings.json
     ln -sf "$DOTFILES_DIR/config/claude/statusline.sh" ~/.claude/statusline.sh
 
