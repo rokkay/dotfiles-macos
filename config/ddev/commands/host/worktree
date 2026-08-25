@@ -1,0 +1,282 @@
+#!/usr/bin/env bash
+## Description: Aprovisiona los worktrees nativos de Claude Code (.claude/worktrees) como proyectos DDEV independientes
+## Usage: worktree <up|down|list> [nombre] [--no-db] [--no-files] [--no-composer] [--no-mutagen-fix]
+## Example: "ddev worktree up ux-improvements"
+
+set -euo pipefail
+
+WT_SUBDIR=".claude/worktrees"
+# Se construye por trozos para que DDEV no lo tome como marca de fichero generado.
+DDEV_MARKER="#ddev-""generated"
+
+msg()  { printf '\033[1;36m==>\033[0m %s\n' "$*"; }
+warn() { printf '\033[1;33mAVISO:\033[0m %s\n' "$*" >&2; }
+die()  { printf '\033[1;31mERROR:\033[0m %s\n' "$*" >&2; exit 1; }
+
+usage() {
+  cat <<'EOF'
+Uso:
+  ddev worktree up   [nombre] [--no-db] [--no-files] [--no-composer] [--no-mutagen-fix]
+  ddev worktree down [nombre]
+  ddev worktree list
+
+Si lo ejecutas desde dentro de un worktree, el nombre es opcional.
+Los worktrees los crea Claude Code; este comando solo los prepara para DDEV.
+EOF
+}
+
+ddev_name_of() {
+  local root="$1" name=""
+  if [ -f "$root/.ddev/config.yaml" ]; then
+    name="$(yq -r '.name // ""' "$root/.ddev/config.yaml" 2>/dev/null || true)"
+  fi
+  if [ -z "$name" ] || [ "$name" = "null" ]; then
+    name="$(basename "$root")"
+  fi
+  printf '%s' "$name"
+}
+
+sanitize() {
+  printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9-]+/-/g; s/^-+//; s/-+$//'
+}
+
+find_main_root() {
+  local dir="$1"
+  while [ ! -d "$dir/.ddev" ] && [ "$dir" != "/" ]; do
+    dir="$(dirname "$dir")"
+  done
+  [ -d "$dir/.ddev" ] || return 1
+  printf '%s' "$dir"
+}
+
+# Deja en MAIN_ROOT, MAIN_NAME y, si procede, WT_NAME/WT_ROOT/WT_DDEV_NAME.
+# $2 = "required" si hace falta resolver un worktree concreto.
+resolve_context() {
+  local arg="${1:-}" need="${2:-required}" cwd
+  cwd="$(pwd -P)"
+
+  if [[ "$cwd" == *"/$WT_SUBDIR/"* ]]; then
+    MAIN_ROOT="${cwd%%/$WT_SUBDIR/*}"
+    local rest="${cwd#*/$WT_SUBDIR/}"
+    WT_NAME="${rest%%/*}"
+    if [ -n "$arg" ] && [ "$arg" != "$WT_NAME" ]; then
+      die "estás dentro del worktree '$WT_NAME' pero has pedido '$arg'."
+    fi
+  else
+    MAIN_ROOT="$(find_main_root "$cwd")" || die "no encuentro un proyecto DDEV desde $cwd."
+    WT_NAME="$arg"
+    if [ "$need" = "required" ] && [ -z "$WT_NAME" ]; then
+      usage
+      die "hace falta el nombre del worktree."
+    fi
+  fi
+
+  MAIN_NAME="$(ddev_name_of "$MAIN_ROOT")"
+  if [ -n "${WT_NAME:-}" ]; then
+    WT_ROOT="$MAIN_ROOT/$WT_SUBDIR/$WT_NAME"
+    WT_DDEV_NAME="$(sanitize "$MAIN_NAME-$WT_NAME")"
+  fi
+}
+
+project_exists() {
+  ddev list -j 2>/dev/null | jq -e --arg n "$1" '.raw[]?|select(.name==$n)' >/dev/null 2>&1
+}
+
+project_running() {
+  [ "$(ddev list -j 2>/dev/null | jq -r --arg n "$1" '.raw[]?|select(.name==$n)|.status' || true)" = "running" ]
+}
+
+# Excluye /.claude del sync de mutagen del proyecto principal.
+fix_mutagen() {
+  local f="$MAIN_ROOT/.ddev/mutagen/mutagen.yml"
+
+  if [ ! -f "$f" ]; then
+    warn "no hay $f (mutagen no está activo aquí); no hace falta excluir nada."
+    return 0
+  fi
+  if grep -q '"/\.claude"' "$f"; then
+    return 0
+  fi
+
+  msg "Excluyendo /.claude del sync de mutagen de '$MAIN_NAME'"
+  if head -1 "$f" | grep -q "$DDEV_MARKER"; then
+    warn "quito la marca $DDEV_MARKER de $f: a partir de ahora ese fichero es vuestro y DDEV dejará de actualizarlo. Commitéalo."
+    sed -i '' "1{/$DDEV_MARKER/d;}" "$f"
+  fi
+  awk '
+    /^[[:space:]]*paths:[[:space:]]*$/ && !done { print; print "        - \"/.claude\""; done=1; next }
+    { print }
+  ' "$f" > "$f.tmp" && mv "$f.tmp" "$f"
+  grep -q '"/\.claude"' "$f" || die "no he sabido insertar la exclusión en $f; añade '- \"/.claude\"' bajo ignore.paths a mano."
+
+  if project_running "$MAIN_NAME"; then
+    msg "Reiniciando el sync de '$MAIN_NAME' para aplicar la exclusión"
+    ( cd "$MAIN_ROOT" && ddev mutagen reset >/dev/null && ddev start >/dev/null )
+  fi
+}
+
+copy_untracked() {
+  local rel
+  for rel in .env .env.local web/sites/default/settings.local.php; do
+    if [ -f "$MAIN_ROOT/$rel" ] && [ ! -f "$WT_ROOT/$rel" ]; then
+      mkdir -p "$(dirname "$WT_ROOT/$rel")"
+      cp "$MAIN_ROOT/$rel" "$WT_ROOT/$rel"
+      msg "Copiado $rel del proyecto principal"
+    fi
+  done
+}
+
+# Reescribe en el .env del worktree las claves que dependen del hostname.
+patch_env() {
+  local url="$1" f="$WT_ROOT/.env" k v
+  [ -f "$f" ] || return 0
+  for k in PROJECT_NAME DRUSH_OPTIONS_URI; do
+    grep -qE "^$k=" "$f" || continue
+    case "$k" in
+      PROJECT_NAME)      v="$WT_DDEV_NAME" ;;
+      DRUSH_OPTIONS_URI) v="$url" ;;
+    esac
+    sed -i '' -E "s#^$k=.*#$k=$v#" "$f"
+    msg "  .env: $k=$v"
+  done
+}
+
+sync_files() {
+  local rel
+  for rel in web/sites/default/files private_files; do
+    [ -d "$MAIN_ROOT/$rel" ] || continue
+    msg "Sincronizando $rel"
+    mkdir -p "$WT_ROOT/$rel"
+    rsync -a --delete "$MAIN_ROOT/$rel/" "$WT_ROOT/$rel/"
+  done
+}
+
+copy_db() {
+  if ! project_running "$MAIN_NAME"; then
+    warn "el proyecto principal '$MAIN_NAME' no está arrancado; me salto la copia de la base de datos."
+    return 0
+  fi
+  local dump="${TMPDIR:-/tmp}/ddev-worktree-$WT_DDEV_NAME.sql.gz"
+  msg "Exportando la base de datos de '$MAIN_NAME'"
+  ( cd "$MAIN_ROOT" && ddev export-db --gzip --file="$dump" >/dev/null )
+  msg "Importando en '$WT_DDEV_NAME'"
+  ( cd "$WT_ROOT" && ddev import-db --file="$dump" >/dev/null )
+  rm -f "$dump"
+}
+
+cmd_up() {
+  [ -d "$WT_ROOT" ] || die "no existe $WT_ROOT. Los worktrees los crea Claude Code, no este comando."
+  [ -f "$WT_ROOT/.ddev/config.yaml" ] || die "$WT_ROOT no tiene .ddev/config.yaml."
+
+  if [ "$DO_MUTAGEN_FIX" = 1 ]; then
+    fix_mutagen
+  fi
+
+  msg "Configurando el worktree como proyecto DDEV '$WT_DDEV_NAME'"
+  cat > "$WT_ROOT/.ddev/config.local.yaml" <<EOF
+# Generado por 'ddev worktree'. DDEV ya gitignora config.local.y*ml.
+# Evita la colisión de nombre con el proyecto principal '$MAIN_NAME'.
+name: $WT_DDEV_NAME
+EOF
+
+  copy_untracked
+
+  msg "Arrancando '$WT_DDEV_NAME'"
+  local startlog="${TMPDIR:-/tmp}/ddev-worktree-start-$WT_DDEV_NAME.log"
+  if ! ( cd "$WT_ROOT" && ddev start ) >"$startlog" 2>&1; then
+    if grep -q 'address pools have been fully subnetted' "$startlog"; then
+      warn "Docker se ha quedado sin pools de red. Libera las redes huérfanas con:"
+      warn "    docker network prune -f"
+      warn "y vuelve a lanzar 'ddev worktree up $WT_NAME'."
+    fi
+    tail -20 "$startlog" >&2
+    die "'ddev start' ha fallado (log completo en $startlog)."
+  fi
+  rm -f "$startlog"
+
+  local url
+  url="$( cd "$WT_ROOT" && ddev describe -j | jq -r '.raw.primary_url' )"
+  if [ -z "$url" ] || [ "$url" = "null" ]; then
+    die "no he podido leer la URL de '$WT_DDEV_NAME'."
+  fi
+  patch_env "$url"
+
+  if [ "$DO_COMPOSER" = 1 ]; then
+    msg "composer install (tarda unos minutos)"
+    ( cd "$WT_ROOT" && ddev composer install --no-interaction )
+  fi
+  if [ "$DO_DB" = 1 ]; then
+    copy_db
+  fi
+  if [ "$DO_FILES" = 1 ]; then
+    sync_files
+  fi
+
+  ( cd "$WT_ROOT" && ddev drush cr >/dev/null 2>&1 ) || true
+
+  echo
+  msg "Listo: $url"
+  echo "    proyecto DDEV : $WT_DDEV_NAME"
+  echo "    worktree      : $WT_ROOT"
+  echo "    apagar        : ddev worktree down $WT_NAME"
+}
+
+cmd_down() {
+  [ -d "$WT_ROOT" ] || die "no existe $WT_ROOT."
+  if project_exists "$WT_DDEV_NAME"; then
+    msg "Eliminando el proyecto DDEV '$WT_DDEV_NAME' (contenedores y base de datos)"
+    ddev delete -O -y "$WT_DDEV_NAME" >/dev/null
+  else
+    warn "'$WT_DDEV_NAME' no está registrado en DDEV."
+  fi
+  rm -f "$WT_ROOT/.ddev/config.local.yaml"
+  msg "Hecho. El worktree sigue en disco; bórralo desde Claude Code si ya no lo necesitas."
+}
+
+cmd_list() {
+  local dir="$MAIN_ROOT/$WT_SUBDIR"
+  if [ ! -d "$dir" ]; then
+    echo "No hay worktrees en $dir"
+    return 0
+  fi
+  printf '%-26s %-32s %-18s %s\n' "WORKTREE" "PROYECTO DDEV" "ESTADO" "RAMA"
+  local d n dn st br
+  for d in "$dir"/*/; do
+    [ -d "$d" ] || continue
+    n="$(basename "$d")"
+    dn="$(sanitize "$MAIN_NAME-$n")"
+    if [ ! -f "$d/.ddev/config.local.yaml" ]; then
+      st="sin aprovisionar"
+    else
+      st="$(ddev list -j 2>/dev/null | jq -r --arg x "$dn" '.raw[]?|select(.name==$x)|.status' || true)"
+      [ -n "$st" ] || st="desconocido"
+    fi
+    br="$(git -C "$d" branch --show-current 2>/dev/null || echo '?')"
+    printf '%-26s %-32s %-18s %s\n' "$n" "$dn" "$st" "$br"
+  done
+}
+
+DO_DB=1; DO_FILES=1; DO_COMPOSER=1; DO_MUTAGEN_FIX=1
+ACTION="${1:-}"
+[ $# -gt 0 ] && shift
+NAME_ARG=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --no-db)          DO_DB=0 ;;
+    --no-files)       DO_FILES=0 ;;
+    --no-composer)    DO_COMPOSER=0 ;;
+    --no-mutagen-fix) DO_MUTAGEN_FIX=0 ;;
+    -h|--help)        usage; exit 0 ;;
+    -*)               die "flag desconocido: $1" ;;
+    *)                NAME_ARG="$1" ;;
+  esac
+  shift
+done
+
+case "$ACTION" in
+  up)   resolve_context "$NAME_ARG" required; cmd_up ;;
+  down) resolve_context "$NAME_ARG" required; cmd_down ;;
+  list) resolve_context "$NAME_ARG" optional; cmd_list ;;
+  ""|-h|--help) usage ;;
+  *)    usage; die "acción desconocida: $ACTION" ;;
+esac

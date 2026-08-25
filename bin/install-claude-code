@@ -67,6 +67,31 @@ if [ -d "$DOTFILES_DIR/config/claude" ]; then
     rm -rf ~/.claude/agents
     ln -sf "$DOTFILES_DIR/config/claude/agents" ~/.claude/agents
 
+    # Symlink entire hooks directory
+    rm -rf ~/.claude/hooks
+    ln -sf "$DOTFILES_DIR/config/claude/hooks" ~/.claude/hooks
+
+    # Los hooks se declaran en settings.json con ruta absoluta porque no está
+    # garantizado que Claude Code expanda variables en el campo "command".
+    # Aquí la reescribimos con el HOME de esta máquina.
+    python3 - "$DOTFILES_DIR/config/claude/settings.json" "$HOME" <<'PYEOF'
+import json, sys, re
+path, home = sys.argv[1], sys.argv[2]
+data = json.load(open(path))
+changed = False
+for entries in data.get("hooks", {}).values():
+    for entry in entries:
+        for hook in entry.get("hooks", []):
+            cmd = hook.get("command", "")
+            m = re.search(r"/\.claude/hooks/.*$", cmd)
+            if m and cmd != home + m.group(0):
+                hook["command"] = home + m.group(0)
+                changed = True
+if changed:
+    open(path, "w").write(json.dumps(data, indent=2) + "\n")
+    print("  settings.json: rutas de hooks reescritas a " + home)
+PYEOF
+
     success "Claude Code configured"
 else
     warn "Dotfiles directory not found, skipping configuration"
