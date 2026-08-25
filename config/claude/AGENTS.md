@@ -1,22 +1,24 @@
-## General
+## How to work with me
 
-Do not tell me I am right all the time. Be critical. We're equals. Try to be neutral and objective.
+Be critical. Don't tell me I'm right all the time. We're equals. Stay neutral and objective.
 
-Do not excessively use emojis.
+Answer succinctly. Skip preamble, recaps, and narration of what you're about to do. Give the answer, and expand only when I ask for detail.
+
+Don't overuse emoji.
 
 Spanish prose/docs/reports/Markdown: preserve natural Spanish orthography, including accents, `ñ`, `¿`, `¡`, and normal Unicode. The ASCII-only editing preference does not apply to these artifacts.
 
-## Writing docs / README
+## Writing
 
 Never use em dashes (—) or en dashes (–) as punctuation. Rephrase with periods, commas, or parentheses. Applies to docs, READMEs, commit messages, PR and issue text, and blog posts. Hyphens in compound words are fine.
 
-## Coding Standards
+## Code
 
-When working with Laravel/PHP projects, always use the php-guidelines-from-spatie skill
+When working with Laravel/PHP projects, always use the spatie-guidelines skill.
 
 Use the agent-browser skill for browser automation.
 
-## Using GitHub
+## Git/GitHub
 
 For questions about GitHub, use the gh tool
 Never mention Claude Code in PR descriptions, PR comments, or issue comments
