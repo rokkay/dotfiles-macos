@@ -1,0 +1,89 @@
+# Starship configuration - agnoster theme style
+# https://starship.rs/config/
+
+# Use custom format with powerline-style separators
+format = """
+$username\
+[](bg:#2aa198 fg:black)\
+$directory\
+[](bg:#b58900 fg:#2aa198)\
+$git_branch\
+$git_status\
+[](fg:#b58900)\
+$character"""
+
+# Don't print a new line at the start of the prompt
+add_newline = false
+
+[username]
+show_always = false
+style_user = "bg:black fg:white bold"
+style_root = "bg:black fg:red bold"
+format = "[$user](bg:black)"
+
+[directory]
+style = "bg:#2aa198 fg:black bold"
+format = "[ $path ]($style)"
+truncation_length = 3
+truncation_symbol = "…/"
+truncate_to_repo = true
+
+[git_branch]
+symbol = ""
+style = "bg:#b58900 fg:black bold"
+format = "[ $branch ]($style)"
+
+[git_status]
+style = "bg:#b58900 fg:black bold"
+format = "[$all_status$ahead_behind]($style)"
+conflicted = "="
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+untracked = "?"
+stashed = "$"
+modified = "!"
+staged = "+"
+renamed = "»"
+deleted = "✘"
+
+[nodejs]
+symbol = " "
+style = "bg:yellow fg:black"
+format = "[ $symbol($version) ]($style)"
+disabled = true
+
+[php]
+symbol = " "
+style = "bg:yellow fg:black"
+format = "[ $symbol($version) ]($style)"
+disabled = true
+
+[ruby]
+symbol = " "
+style = "bg:yellow fg:black"
+format = "[ $symbol($version) ]($style)"
+disabled = true
+
+[character]
+success_symbol = "[→](bold white)"
+error_symbol = "[→](bold red)"
+
+[time]
+disabled = false
+time_format = "%R"
+style = "bg:black fg:white"
+format = "[ $time ]($style)"
+
+# Disable modules we don't need for speed
+[aws]
+disabled = true
+
+[gcloud]
+disabled = true
+
+[docker_context]
+disabled = true
+
+[package]
+disabled = true

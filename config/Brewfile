@@ -22,6 +22,7 @@ brew "mackup"
 brew "zsh-autosuggestions"
 
 # Modern CLI tools
+brew "starship"
 brew "zoxide"
 brew "bat"
 brew "eza"

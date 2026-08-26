@@ -70,6 +70,11 @@ if [ -d "$DOTFILES_DIR/config/claude" ]; then
     rm -rf ~/.claude/hooks
     ln -sf "$DOTFILES_DIR/config/claude/hooks" ~/.claude/hooks
 
+    # Share the harness-neutral skills with Codex and any other SKILL.md reader.
+    if [ -x "$DOTFILES_DIR/bin/link-agent-skills" ]; then
+        DOTFILES_DIR="$DOTFILES_DIR" "$DOTFILES_DIR/bin/link-agent-skills"
+    fi
+
     # Los hooks se declaran en settings.json con ruta absoluta porque no está
     # garantizado que Claude Code expanda variables en el campo "command".
     # Aquí la reescribimos con el HOME de esta máquina.
