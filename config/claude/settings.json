@@ -63,6 +63,7 @@
     ],
     "defaultMode": "auto"
   },
+  "model": "opus[1m]",
   "disableClaudeAiConnectors": true,
   "hooks": {
     "PreToolUse": [
@@ -118,9 +119,52 @@
   },
   "alwaysThinkingEnabled": true,
   "effortLevel": "high",
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "high"
+    }
+  },
+  "dialogExpiry": "never",
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
   "preferredNotifChannel": "ghostty",
   "skipAutoPermissionPrompt": true,
-  "model": "claude-fable-5[1m]"
+  "autoMode": {
+    "allow": [
+      "$defaults",
+      "Bash(ddev *) in /Users/rokkay/work/projects/irb-phd",
+      "Bash(make code-fix) in /Users/rokkay/work/projects/irb-phd",
+      "Bash(make backup) in /Users/rokkay/work/projects/irb-phd"
+    ],
+    "soft_deny": [
+      "$defaults",
+      "Bash(ddev drush cex:*) writes to config/sync — treat as review-worthy config export",
+      "make deploy / make deploy-database / make deploy-dependencies (production deploy path per Makefile targets)"
+    ],
+    "environment": [
+      "### Org-wide",
+      "**Organization**: None configured",
+      "**Cloud provider(s)**: None configured",
+      "**Repository visibility**: Not queryable via gh (origin is bitbucket.org, not github.com) — assume private (no signal of public visibility for irbbarcelona/phd)",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: None configured — secrets are supplied via gitignored `.env` / `.env.make` files (DB credentials, HASH_SALT, SMTP credentials), not committed",
+      "**Default / protected branches**: Default branch is `test` (per CLAUDE.md); `master` must be left alone. No gh-based branch-protection data available (non-GitHub host)",
+      "**CI/CD deploy targets**: None configured — no CI detected in this repo (CLAUDE.md states there is no CI)",
+      "**Network posture**: None configured",
+      "**Source control**: bitbucket.org:irbbarcelona/phd.git (origin) — this repo and its configured remote only",
+      "**Trusted internal domains**: irb-phd.ddev.site (local DDEV dev host used in this project)",
+      "**Trusted cloud buckets**: None configured",
+      "**Key internal services**: None configured",
+      "**Internal package registry**: None configured",
+      "**Sensitive data locations & audiences**: `.env`, `.env.make` (DB/SMTP credentials, HASH_SALT — gitignored); `drush/sites/prod.site.yml` and `web/sites/default/settings.prod.php` (production site settings); `config/sync/user.role.secretary.yml` and the secretary role-action configs (candidate/referee PhD admissions data — personal data of applicants and referees); share only with audiences cleared at the [named+specifics] bar",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment — includes `drush/sites/prod.site.yml` and `settings.prod.php` deploy targets in this repo",
+      "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic (the `prod` ENVIRONMENT value / prod.site.yml in this repo)",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
+      "### User-specific",
+      "**Primary use of Claude Code**: software development (Drupal/PHP, this project)",
+      "**Trusted repo**: /Users/rokkay/work/projects/irb-phd (working directory) and its remote bitbucket.org:irbbarcelona/phd.git — assumed private; confidential material (excluding secrets, which are never cleared by visibility) is fine to commit/push here",
+      "**Org-specific CLIs**: ddev, drush, make (project Makefile wrapper), composer — routine under this repo's working tree"
+    ]
+  }
 }
