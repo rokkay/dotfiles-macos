@@ -64,20 +64,23 @@ alias gp-saml-gui=~/venvs/gp-saml-gui/bin/gp-saml-gui
 # Enable aliases to be sudo’ed
 alias sudo='sudo '
 
-# Modern CLI tool aliases (conditional on installation)
-if command -v eza &> /dev/null; then
-    alias ls="eza --icons --group-directories-first"
-    alias l="eza -la --icons --group-directories-first --hyperlink"
-    alias ll="eza -l --icons --group-directories-first --hyperlink"
-    alias lt="eza --tree --level=2 --icons"
-fi
+# Modern CLI tool aliases (conditional on installation).
+# Skipped inside Claude Code, whose commands expect POSIX grep/cat/ls behavior.
+if [[ -z "$CLAUDECODE" ]]; then
+    if command -v eza &> /dev/null; then
+        alias ls="eza --icons --group-directories-first"
+        alias l="eza -la --icons --group-directories-first --hyperlink"
+        alias ll="eza -l --icons --group-directories-first --hyperlink"
+        alias lt="eza --tree --level=2 --icons"
+    fi
 
-if command -v bat &> /dev/null; then
-    alias cat="bat --style=plain"
-fi
+    if command -v bat &> /dev/null; then
+        alias cat="bat --style=plain"
+    fi
 
-if command -v rg &> /dev/null; then
-    alias grep="rg"
+    if command -v rg &> /dev/null; then
+        alias grep="rg"
+    fi
 fi
 
 if command -v bottom &> /dev/null; then
