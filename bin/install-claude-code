@@ -58,6 +58,11 @@ if [ -d "$DOTFILES_DIR/config/claude" ]; then
     ln -sf "$DOTFILES_DIR/config/claude/settings.json" ~/.claude/settings.json
     ln -sf "$DOTFILES_DIR/config/claude/statusline.sh" ~/.claude/statusline.sh
 
+    # Shared instructions for every Drupal project
+    if [ -d ~/work/projects/drupal ]; then
+        ln -sf "$DOTFILES_DIR/config/claude/drupal.md" ~/work/projects/drupal/CLAUDE.md
+    fi
+
     # Symlink entire skills directory
     rm -rf ~/.claude/skills
     ln -sf "$DOTFILES_DIR/config/claude/skills" ~/.claude/skills
@@ -74,27 +79,6 @@ if [ -d "$DOTFILES_DIR/config/claude" ]; then
     if [ -x "$DOTFILES_DIR/bin/link-agent-skills" ]; then
         DOTFILES_DIR="$DOTFILES_DIR" "$DOTFILES_DIR/bin/link-agent-skills"
     fi
-
-    # Los hooks se declaran en settings.json con ruta absoluta porque no está
-    # garantizado que Claude Code expanda variables en el campo "command".
-    # Aquí la reescribimos con el HOME de esta máquina.
-    python3 - "$DOTFILES_DIR/config/claude/settings.json" "$HOME" <<'PYEOF'
-import json, sys, re
-path, home = sys.argv[1], sys.argv[2]
-data = json.load(open(path))
-changed = False
-for entries in data.get("hooks", {}).values():
-    for entry in entries:
-        for hook in entry.get("hooks", []):
-            cmd = hook.get("command", "")
-            m = re.search(r"/\.claude/hooks/.*$", cmd)
-            if m and cmd != home + m.group(0):
-                hook["command"] = home + m.group(0)
-                changed = True
-if changed:
-    open(path, "w").write(json.dumps(data, indent=2) + "\n")
-    print("  settings.json: rutas de hooks reescritas a " + home)
-PYEOF
 
     success "Claude Code configured"
 else
@@ -113,7 +97,7 @@ echo ""
 step "Next steps:"
 if [ ! -d "$DOTFILES_DIR/config/claude" ]; then
     echo "  • Clone dotfiles for custom configuration:"
-    echo "    git clone https://github.com/freekmurze/dotfiles.git ~/.dotfiles"
+    echo "    git clone https://github.com/rokkay/dotfiles-macos.git ~/.dotfiles"
     echo "    ~/.dotfiles/bin/install-claude-code"
     echo ""
 fi
