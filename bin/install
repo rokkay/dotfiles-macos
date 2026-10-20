@@ -51,9 +51,8 @@ success "Git configured"
 
 # Symlinks
 step "Creating symlinks"
-rm -f ~/.zshrc ~/.vimrc ~/.vim ~/.mackup.cfg
+rm -f ~/.zshrc
 ln -sf ~/.dotfiles/home/.zshrc ~/.zshrc
-ln -sf ~/.dotfiles/macos/.mackup.cfg ~/.mackup.cfg
 mkdir -p ~/bin
 ln -sf ~/.dotfiles/bin/php-format ~/bin/php-format
 mkdir -p ~/.config/zed
@@ -135,7 +134,14 @@ echo ""
 read -p "Install Codex? (y/n) " -n 1 -r
 echo ""
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    bash ~/.dotfiles/bin/install-codex || warn "Codex setup had issues"
+    if command -v codex &>/dev/null; then
+        warn "Codex already installed"
+    else
+        brew install --cask codex || warn "Codex installation failed"
+    fi
+    # link-agent-skills only links when ~/.codex exists, which Codex creates on first run.
+    mkdir -p ~/.codex
+    bash ~/.dotfiles/bin/link-agent-skills || warn "Codex skill linking had issues"
 else
     warn "Skipping Codex installation"
 fi
