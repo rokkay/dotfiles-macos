@@ -1,5 +1,5 @@
 [core]
-	excludesfile = /Users/rokkay/.global-gitignore
+	excludesfile = ~/.global-gitignore
 	autocrlf = false
 	pager = delta
 

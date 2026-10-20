@@ -4,7 +4,7 @@
 # {buffer_path} is passed as $1 for context (file extension, config lookup).
 
 FILE="$1"
-GLOBAL_PINT="/Users/rokkay/.composer/vendor/bin/pint"
+GLOBAL_PINT="$HOME/.composer/vendor/bin/pint"
 
 # Find project root by walking up from the file's directory
 find_project_root() {

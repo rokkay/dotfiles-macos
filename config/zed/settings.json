@@ -136,7 +136,7 @@
       "language_servers": ["intelephense", "!phpactor", "!phptools", "..."],
       "formatter": {
         "external": {
-          "command": "/Users/rokkay/bin/php-format",
+          "command": "php-format",
           "arguments": ["{buffer_path}"],
         },
       },

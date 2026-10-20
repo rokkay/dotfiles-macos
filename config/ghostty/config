@@ -1,5 +1,5 @@
 term = xterm-256color
-working-directory = /Users/rokkay/work/projects
+working-directory = ~/work/projects
 cursor-style = block
 shell-integration-features = no-cursor
 palette = 2=#5ccd86
