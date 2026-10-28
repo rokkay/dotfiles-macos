@@ -363,6 +363,8 @@ El hook `hooks/ddev-worktree-guard.sh` cierra el círculo:
 | `model` / `effortLevel` | Opus con contexto de 1M y esfuerzo alto |
 | `alwaysThinkingEnabled` | Razonamiento extendido activado por defecto |
 | `attribution` | Vacío: ni commits ni PRs llevan atribución a Claude |
+| `promptCacheTtl: 1h` | Caché de una hora en la conversación principal, también al gastar créditos extra (por defecto bajaría a 5 minutos) |
+| `idleCompaction: false` | No resume la conversación mientras está inactiva; al volver se conserva el contexto completo |
 | `pluginConfigs` (`instructionFiles`) | `claude-md-and-agents-md`: carga `CLAUDE.md` y `AGENTS.md` juntos. Sin esto, el `CLAUDE.md` de `~/work/projects/drupal/` haría que Claude ignorase el `AGENTS.md` de cada proyecto |
 | `disableClaudeAiConnectors` | Deja los conectores de claude.ai fuera de la terminal |
 | `cleanupPeriodDays` | Conserva las transcripciones un año |

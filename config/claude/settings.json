@@ -3,6 +3,10 @@
   "env": {
     "CLAUDE_CODE_NEW_INIT": "1"
   },
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "permissions": {
     "allow": [
       "Bash(gh:*)",
@@ -116,12 +120,21 @@
       }
     }
   },
+  "promptCacheTtl": "1h",
   "alwaysThinkingEnabled": true,
   "effortLevel": "high",
   "dialogExpiry": "never",
+  "pluginConfigs": {
+    "cc-plugin-agents-md@builtin": {
+      "options": {
+        "instructionFiles": "claude-md-and-agents-md"
+      }
+    }
+  },
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
   "preferredNotifChannel": "ghostty",
+  "idleCompaction": false,
   "skipAutoPermissionPrompt": true,
   "autoMode": {
     "allow": [
@@ -145,16 +158,5 @@
       "**Primary use of Claude Code**: desarrollo y mantenimiento de sitios de clientes, incluido diagnóstico en servidores remotos",
       "**Org-specific CLIs**: ddev, drush, composer, make, agent-browser; rutinarios dentro del árbol del proyecto"
     ]
-  },
-  "attribution": {
-    "commit": "",
-    "pr": ""
-  },
-  "pluginConfigs": {
-    "cc-plugin-agents-md@builtin": {
-      "options": {
-        "instructionFiles": "claude-md-and-agents-md"
-      }
-    }
   }
 }
