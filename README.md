@@ -305,6 +305,10 @@ Todas las skills están en `config/claude/skills/` y quedan disponibles en cuant
 `AGENTS.md` recoge cómo quiero que trabaje el agente en cualquier proyecto:
 
 - Respuestas críticas y breves, con ortografía española correcta y sin rayas como puntuación.
+- Trabajo en cola: las correcciones se añaden al final y no interrumpen la tarea en curso, salvo que la invaliden.
+- Los errores se tratan como huecos en las instrucciones, con una propuesta de corrección en lugar de disculpas.
+- YAGNI: nada de sobreingeniería ni ampliar el alcance sin permiso, con un esfuerzo acorde a lo que pide el proyecto.
+- Revisión de los cambios de código no triviales por un subagente con un modelo barato y contexto mínimo.
 - Borradores para clientes, JIRA, correo o chat: cortos y en español.
 - `spatie-guidelines` solo en proyectos Laravel, no en Drupal ni Symfony.
 - agent-browser para automatizar el navegador; Chrome o Safari cuando hace falta mi sesión.

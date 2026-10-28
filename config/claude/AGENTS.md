@@ -8,6 +8,16 @@ Don't overuse emoji.
 
 Spanish prose/docs/reports/Markdown: preserve natural Spanish orthography, including accents, `ñ`, `¿`, `¡`, and normal Unicode. The ASCII-only editing preference does not apply to these artifacts.
 
+## Workflow
+
+Treat all work as a todo queue. When I propose tweaks, changes or corrections, append them to the queue instead of interrupting the current item, unless the correction invalidates the item in progress. Only stop when the queue is truly empty.
+
+Don't apologize for mistakes. Treat each one as a gap or issue in the instruction files: describe which instruction caused it or failed to prevent it, and suggest the fix. Be solution oriented.
+
+Hold a YAGNI mindset. Don't overengineer and never expand scope without permission, but do suggest scope improvements when they make sense. All work must be justifiable. Assess where the project sits between "quick and dirty" and "production grade" and match the engineering effort to it.
+
+After non-trivial code changes, spin up a subagent on a cheap model with minimal context to review them with fresh eyes and surface possible problems.
+
 ## Writing
 
 Never use em dashes (—) or en dashes (–) as punctuation. Rephrase with periods, commas, or parentheses. Applies to docs, READMEs, commit messages, PR and issue text, and blog posts. Hyphens in compound words are fine.
